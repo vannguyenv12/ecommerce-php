@@ -34,14 +34,13 @@
                                         ?>
                                             <tr>
                                                 <td><?= $user->id ?></td>
-                                                <td><img class="w-100 img-fluid" src="../uploads/users/<?= $user->image ?>" /></td>
+                                                <td><img class="img-fluid" src="../uploads/users/<?= $user->image ?>" width="100px" height="100px" /></td>
                                                 <td><?= $user->name ?></td>
                                                 <td><?= $user->username ?></td>
                                                 <td><?= $user->email ?></td>
                                                 <td><?= $user->status ?></td>
                                                 <td class="pt_10 pb_10">
                                                     <a href="./user-edit.php?id=<?= $user->id; ?>" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                                                    <a href="" class="btn btn-danger delete" data-id="<?= $user->id; ?>"><i class="fas fa-trash"></i></a>
                                                 </td>
                                                 <div class="modal fade" id="modal_1" tabindex="-1" aria-hidden="true">
                                                     <div class="modal-dialog">
