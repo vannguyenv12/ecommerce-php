@@ -2,6 +2,10 @@
 require "./include/header.php";
 require "./include/topbar.php";
 require "./include/navbar.php";
+
+require_once "vendor/autoload.php";
+
+use Omnipay\Omnipay;
 ?>
 
 <?php
@@ -9,6 +13,81 @@ $user_id = $_SESSION['user']->id;
 $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
 
 $addressList = $db->customQuery("SELECT * FROM user_addresses WHERE user_id = ?", [$user_id]);
+
+if (count($addressList) > 0) {
+    $address = $addressList[0];
+} else {
+    $address = "";
+}
+
+// $gateway = Omnipay::create('PayPal_Rest');
+
+// $gateway->setClientId('AaPMKYRpZiPE5ZQ0IsTKq25yR46CwUib74X12Z2g_9Htk1TGfTwOlS1twS4J-nf-vwIpsyd8j5b_v2eu');
+// $gateway->setSecret('ELURv5NZMBUO6aiPF7T-sa2c3mFon39HbO6Cw29ruCYkbn9hlVaVZrLYBpq8f7fgBjUgeA4aRKkzMV6F');
+// $gateway->setTestMode(true);
+
+// if (isset($_POST['form_paypal'])) {
+//     try {
+
+//         $response = $gateway->purchase(array(
+//             'amount' => calculateTotalCartPrice($cartList),
+//             'currency' => 'USD',
+//             'returnUrl' => './paypal-success.php',
+//             'cancelUrl' => './paypal-cancel.php'
+//         ))->send();
+
+//         if ($response->isRedirect()) {
+//             $response->redirect();
+//         } else {
+//             return $response->getMessage();
+//         }
+//     } catch (\Throwable $th) {
+//         return $th->getMessage();
+//     }
+// }
+
+if (isset($_POST['form_paypal'])) {
+    $invoiceId = generateRandomNumber();
+    $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$_SESSION['user']->id]);
+
+
+    // Create Order
+    $db->insert(
+        "orders",
+        [
+            "invoice_id", "user_id", "amount", "product_qty",
+            "payment_method", "payment_status", "order_address",
+            "order_status"
+        ],
+        [
+            $invoiceId, $_SESSION['user']->id, calculateTotalCartPrice($cartList), count($cartList),
+            'paypal', 1, $address->address, 'pending'
+        ]
+    );
+
+    // Find order
+    $order = $db->query("orders", "invoice_id", $invoiceId);
+
+    // Cart
+
+    foreach ($cartList as $cart) {
+        $db->insert(
+            "order_products",
+            [
+                "order_id", "product_id", "product_name", "variants", "variant_total",
+                "price", "qty"
+            ],
+            [
+                $order->id, $cart->product_id, $cart->product_name, $cart->variants, $cart->variant_total,
+                $cart->price, $cart->qty
+            ]
+        );
+    }
+
+    // Remove All Cart
+    $db->delete("carts", "user_id", $_SESSION['user']->id);
+}
+
 
 ?>
 
@@ -148,16 +227,19 @@ $addressList = $db->customQuery("SELECT * FROM user_addresses WHERE user_id = ?"
             </div>
             <div class="mb-5">
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
-                <div class="bg-light p-30">
-                    <div class="form-group">
-                        <div class="custom-control custom-radio">
-                            <input type="radio" class="custom-control-input" name="payment" id="paypal">
-                            <label class="custom-control-label" for="paypal">Paypal</label>
-                        </div>
-                    </div>
+                <form method="POST" action="">
 
-                    <button class="btn btn-block btn-primary font-weight-bold py-3">Place Order</button>
-                </div>
+                    <div class="bg-light p-30">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
+                                <label class="custom-control-label" for="paypal">Paypal</label>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-block btn-primary font-weight-bold py-3" name="form_paypal">Place Order</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

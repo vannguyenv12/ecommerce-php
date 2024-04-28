@@ -109,3 +109,9 @@ function calculateTotalCartPrice($cartList)
 
     return $totalPrice;
 }
+
+function generateRandomNumber()
+{
+    $randomNumber = rand(100000, 999999);
+    return $randomNumber;
+}
