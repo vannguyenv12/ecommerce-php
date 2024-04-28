@@ -35,7 +35,12 @@
                                                 <td><?= $order->invoice_id ?></td>
                                                 <td><?= $user->name ?></td>
                                                 <td><?= $order->amount ?></td>
-                                                <td><?= $order->order_status ?></td>
+                                                <td>
+                                                    <select class="form-control order_status" data-order-id="<?= $order->id ?>" name="order_status">
+                                                        <option <?= $order->order_status == 'pending' ? 'selected' : '' ?> value="pending">Pending</option>
+                                                        <option <?= $order->order_status == 'delivered' ? 'selected' : '' ?> value="delivered">Delivered</option>
+                                                    </select>
+                                                </td>
                                                 <td class="pt_10 pb_10">
                                                     <a href="./order-detail.php?invoiceId=<?= $order->invoice_id ?>" class="btn btn-warning"><i class="fas fa-eye"></i></a>
                                                 </td>
@@ -89,50 +94,31 @@
 <script src="dist/js/custom.js"></script>
 <script>
     $(document).ready(function() {
-        $('.delete').click(function(e) {
-            e.preventDefault();
-            $('#myModal').modal('show');
-            const productId = $(this).attr("data-id");
+        $('.order_status').change(function() {
+            const orderId = $(this).data('order-id');
+            const status = $(this).val();
 
-            $('.confirm').click(function() {
-                $.ajax({
-                    type: 'POST',
-                    url: 'product-delete.php',
-                    data: {
-                        productId: productId
-                    },
-                    success: function(response) {
-                        sessionStorage.setItem("reloading", "true");
-                        window.location.reload();
-                    }
-                });
+            $.ajax({
+                method: 'POST',
+                url: './order-status-change.php',
+                data: {
+                    order_id: orderId,
+                    status
+                },
+                success(response) {
+                    Toastify({
+                        text: "Updated Status Successfully",
+                        duration: 4000,
+                        gravity: "top", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                    }).showToast();
+                }
             })
-
-
         });
-
-
-        window.onload = showMessage();
-
-        function showMessage() {
-            var reloading = sessionStorage.getItem("reloading");
-            if (reloading) {
-                sessionStorage.removeItem("reloading");
-                Toastify({
-                    text: "Deleted Successfully",
-                    duration: 4000,
-                    gravity: "top", // `top` or `bottom`
-                    position: "center", // `left`, `center` or `right`
-                    style: {
-                        background: "linear-gradient(to right, #00b09b, #96c93d)",
-                    },
-                }).showToast();
-            }
-
-        }
-
-
-    });
+    })
 </script>
 
 </body>
