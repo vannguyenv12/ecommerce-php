@@ -1,6 +1,7 @@
 <?php
 require_once "./config/database.php";
 require_once "./helpers.php";
+require_once "./services/index.php";
 $db = new Database();
 
 ?>

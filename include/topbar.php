@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!-- Topbar Start -->
 <div class="container-fluid">
     <div class="row bg-secondary py-1 px-xl-5">
@@ -13,26 +17,24 @@
             <div class="d-inline-flex align-items-center">
                 <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account</button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="./signin.php">Sign in</a>
-                        <a class="dropdown-item" href="./signup.php">Sign up</a>
-                    </div>
-                </div>
-                <div class="btn-group mx-2">
-                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">USD</button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <button class="dropdown-item" type="button">EUR</button>
-                        <button class="dropdown-item" type="button">GBP</button>
-                        <button class="dropdown-item" type="button">CAD</button>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">EN</button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <button class="dropdown-item" type="button">FR</button>
-                        <button class="dropdown-item" type="button">AR</button>
-                        <button class="dropdown-item" type="button">RU</button>
-                    </div>
+
+                    <?php
+                    if (isset($_SESSION['user'])) {
+                    ?>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="./profile.php">My Profile</a>
+                            <a class="dropdown-item" href="./logout.php">Logout</a>
+                        </div>
+                    <?php
+                    } else {
+                    ?>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="./signin.php">Sign in</a>
+                            <a class="dropdown-item" href="./signup.php">Sign up</a>
+                        </div>
+                    <?php
+                    }
+                    ?>
                 </div>
             </div>
             <div class="d-inline-flex align-items-center d-block d-lg-none">

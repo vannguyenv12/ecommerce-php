@@ -1,3 +1,18 @@
+<?php
+require './helpers.php';
+require basePath('config/database.php');
+require basePath('services/Auth.php');
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $user = Auth::signIn($_POST['username'], $_POST['password']);
+
+    $_SESSION['user'] = $user;
+
+    header('location: ./index.php');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,18 +49,18 @@
                         <div class="fp__login_area">
                             <h2>Welcome back!</h2>
                             <p>sign up to continue</p>
-                            <form>
+                            <form action="" method="POST">
                                 <div class="row">
                                     <div class="col-xl-12">
                                         <div class="fp__login_imput">
                                             <label>username</label>
-                                            <input type="text" placeholder="Username">
+                                            <input type="text" placeholder="Username" name="username">
                                         </div>
                                     </div>
                                     <div class="col-xl-12">
                                         <div class="fp__login_imput">
                                             <label>password</label>
-                                            <input type="password" placeholder="Password">
+                                            <input type="password" placeholder="Password" name="password">
                                         </div>
                                     </div>
                                     <div class="col-xl-12">

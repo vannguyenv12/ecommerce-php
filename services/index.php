@@ -1,5 +1,7 @@
 <?php
 
+require_once basePath('config/database.php');
+
 function uploadImage($file, $targetDirectory)
 {
     // Kiểm tra xem có lỗi khi tải lên không
@@ -63,4 +65,35 @@ function uploadMultiImages($files, $uploadDirectory)
     }
 
     return $uploadedFiles;
+}
+
+function getAllVariantsName()
+{
+    $db = new Database();
+
+    $result = $db->queryAll("product_variants");
+
+    $variantsName = [];
+    foreach ($result as $row) {
+        $variantsName[] = $row->name;
+    }
+
+    return $variantsName;
+}
+
+function calculateTotalPriceVariants($jsonVariants)
+{
+    $selectedVariants = json_decode($jsonVariants, true);
+
+    $totalPrice = 0;
+
+    foreach ($selectedVariants as $variant) {
+        foreach ($variant as $item) {
+            if (isset($item['price'])) {
+                $totalPrice += (int)$item['price'];
+            }
+        }
+    }
+
+    return $totalPrice;
 }

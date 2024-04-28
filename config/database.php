@@ -97,4 +97,19 @@ class Database
         $sth = $this->dbh->prepare($query);
         $sth->execute([$conditionValue]);
     }
+
+    public function exists(string $tableName, string $columnName, $value): bool
+    {
+        try {
+            $query = "SELECT COUNT(*) FROM $tableName WHERE $columnName = ?";
+            $stmt = $this->dbh->prepare($query);
+            $stmt->execute([$value]);
+            $count = $stmt->fetchColumn();
+
+            return ($count > 0); // Trả về true nếu có ít nhất một hàng có giá trị cần kiểm tra
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+            return false;
+        }
+    }
 }
