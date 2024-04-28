@@ -41,12 +41,12 @@ $cartList = $db->queryAll("carts");
                         <th>Remove</th>
                     </tr>
                 </thead>
-                <tbody class="align-middle">
+                <tbody class="align-middle cart_content">
                     <?php
                     foreach ($cartList as $cart) {
                         $product = $db->query("products", 'id', $cart->product_id);
                     ?>
-                        <tr>
+                        <tr class="tr_product">
                             <td class="align-middle"><img src="./uploads/<?= $product->thumb_image ?>" alt="" style="width: 100px !important; height: 70px !important;"> <?= $cart->product_name ?></td>
                             <td class="align-middle">$<span class="product_price"><?= $product->price ?></span></td>
                             <td class="align-middle">$<span class="variant_price"><?= $cart->variant_total ?></span></td>
@@ -66,7 +66,7 @@ $cartList = $db->queryAll("carts");
                                 </div>
                             </td>
                             <td class="align-middle">$<span class="total_price"><?= $cart->price ?></span></td>
-                            <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
+                            <td class="align-middle"><button class="btn btn-sm btn-danger remove_cart" data-cart-id="<?= $cart->id ?>"><i class="fa fa-times"></i></button></td>
                         </tr>
                     <?php
                     }
@@ -116,17 +116,26 @@ $cartList = $db->queryAll("carts");
 
 <script>
     $(document).ready(function() {
-        $('.increment').on('click', function() {
+        $(document).on('click', '.increment', function() {
+            var parentElement = $(this).closest('.quantity');
+            var inputElement = parentElement.find('input.qty');
+
+            var productBody = $(this).closest('.tr_product');
+            var productPrice = productBody.find('.product_price');
+            var variantPrice = productBody.find('.variant_price');
+            var totalPrice = productBody.find('.total_price');
+
+
+            updateQuantity(inputElement, productPrice, variantPrice, totalPrice);
+        })
+
+        $(document).on('click', '.decrement', function() {
             updateQuantity();
         })
 
-        $('.decrement').on('click', function() {
-            updateQuantity();
-        })
-
-        function updateQuantity() {
-            const productQty = $('.qty').val();
-            const cartId = $('.qty').data("id");
+        function updateQuantity(inputElement, productPriceEl, variantPriceEl, totalPriceEl) {
+            const productQty = inputElement.val();
+            const cartId = inputElement.data("id");
 
             // call ajax
             $.ajax({
@@ -137,15 +146,30 @@ $cartList = $db->queryAll("carts");
                     cart_id: cartId,
                 },
                 success(response) {
-                    const productPrice = parseInt($('.product_price').text());
-                    const variantPrice = parseInt($('.variant_price').text());
-                    const qty = parseInt($('.qty').val());
+                    const productPrice = parseInt(productPriceEl.text());
+                    const variantPrice = parseInt(variantPriceEl.text());
+                    const qty = parseInt(inputElement.val());
+
 
                     const total = (productPrice + variantPrice) * qty;
-                    console.log(total);
-                    $('.total_price').text(total);
+                    totalPriceEl.text(total);
                 }
             })
         }
+
+        $(document).on('click', '.remove_cart', function() {
+            const cartId = $(this).data('cart-id');
+            $.ajax({
+                method: 'POST',
+                url: './cart-delete.php',
+                data: {
+                    cart_id: cartId
+                },
+                success(response) {
+                    $('.cart_content').html(response);
+                }
+            })
+        })
+
     })
 </script>

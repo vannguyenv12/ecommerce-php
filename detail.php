@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         </div>
                         <input hidden name="productId" value="<?= $_GET['productId'] ?>" />
-                        <button type="submit" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To
+                        <button type="submit" class="btn btn-primary px-3 add_to_cart"><i class="fa fa-shopping-cart mr-1"></i> Add To
                             Cart</button>
                     </div>
 
@@ -447,3 +447,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Products End -->
 
 <?php require "./include/footer.php" ?>
+
+<script>
+    $(document).ready(function() {
+        // $('.add_to_cart').on('click', function(e) {
+        //     e.preventDefault();
+        //     let cartQty = +$('.cart_qty').text().trim();
+        //     cartQty++;
+        //     $('.cart_qty').text(cartQty);
+        // })
+    })
+</script>

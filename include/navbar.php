@@ -1,3 +1,6 @@
+<?php require_once basePath('config/database.php');
+$db = new Database();
+?>
 <!-- Navbar Start -->
 <div class="container-fluid bg-dark mb-30">
     <div class="row px-xl-5">
@@ -58,7 +61,14 @@
                         </a>
                         <a href="./cart.php" class="btn px-0 ml-3">
                             <i class="fas fa-shopping-cart text-primary"></i>
-                            <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
+                            <span class="badge text-secondary border border-secondary rounded-circle cart_qty" style="padding-bottom: 2px;">
+                                <?php
+                                $user_id = $_SESSION['user']->id;
+                                $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
+
+                                echo count($cartList)
+                                ?>
+                            </span>
                         </a>
                     </div>
                 </div>
