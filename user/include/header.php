@@ -84,6 +84,22 @@ $error = '
     }).showToast();
     </script>
     ';
+
+$errorPassword = '
+    <script>
+    Toastify({
+
+        text: "Passwords do not match! Try again.",
+        duration: 5000,
+        gravity: "top", // `top` or `bottom`
+        position: "center", // `left`, `center` or `right`
+        style: {
+            background: "red",
+        },
+
+    }).showToast();
+    </script>
+    ';
 ?>
 
 <!DOCTYPE html>

@@ -35,6 +35,15 @@
                 </ul>
             </li>
 
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-hand-point-right"></i><span>Manage User</span></a>
+                <ul class="dropdown-menu">
+                    <li class="active"><a class="nav-link" href="./users.php"><i class="fas fa-angle-right"></i>View User</a></li>
+                    <li class=""><a class="nav-link" href="./user-add.php"><i class="fas fa-angle-right"></i>Add User</a></li>
+                </ul>
+            </li>
+
+
             <li class=""><a class="nav-link" href="setting.php"><i class="fas fa-hand-point-right"></i> <span>Setting</span></a></li>
 
             <li class=""><a class="nav-link" href="form.php"><i class="fas fa-hand-point-right"></i> <span>Form</span></a></li>

@@ -6,7 +6,7 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-            <h1>Brands</h1>
+            <h1>Users</h1>
         </div>
         <div class="section-body">
             <div class="row">
@@ -18,7 +18,10 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Image</th>
                                             <th>Name</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
@@ -26,16 +29,19 @@
                                     <tbody>
 
                                         <?php
-                                        $brandList = $db->customQuery("SELECT * FROM brands", []);
-                                        foreach ($brandList as $brand) {
+                                        $userList = $db->customQuery("SELECT * FROM users", []);
+                                        foreach ($userList as $user) {
                                         ?>
                                             <tr>
-                                                <td><?= $brand->id ?></td>
-                                                <td><?= $brand->name ?></td>
-                                                <td><?= $brand->status ?></td>
+                                                <td><?= $user->id ?></td>
+                                                <td><img class="w-100 img-fluid" src="../uploads/users/<?= $user->image ?>" /></td>
+                                                <td><?= $user->name ?></td>
+                                                <td><?= $user->username ?></td>
+                                                <td><?= $user->email ?></td>
+                                                <td><?= $user->status ?></td>
                                                 <td class="pt_10 pb_10">
-                                                    <a href="./brand-edit.php?id=<?= $brand->id; ?>" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                                                    <a href="" class="btn btn-danger delete" data-id="<?= $brand->id; ?>"><i class="fas fa-trash"></i></a>
+                                                    <a href="./user-edit.php?id=<?= $user->id; ?>" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                                                    <a href="" class="btn btn-danger delete" data-id="<?= $user->id; ?>"><i class="fas fa-trash"></i></a>
                                                 </td>
                                                 <div class="modal fade" id="modal_1" tabindex="-1" aria-hidden="true">
                                                     <div class="modal-dialog">
