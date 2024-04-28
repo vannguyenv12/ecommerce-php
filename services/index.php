@@ -115,3 +115,13 @@ function generateRandomNumber()
     $randomNumber = rand(100000, 999999);
     return $randomNumber;
 }
+
+function formatDate($dateString)
+{
+    if ($dateString !== null) {
+        $formattedDate = date("F j, Y", strtotime($dateString));
+        return $formattedDate;
+    }
+
+    return "";
+}
