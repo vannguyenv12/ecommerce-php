@@ -34,8 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ['user_id', 'product_id', 'product_name', 'variants', 'variant_total', 'price', 'qty'],
         [
             $_SESSION['user']->id, $product->id, $product->name, $jsonVariants,
-            (int)$_POST['qty'] * calculateTotalPriceVariants($jsonVariants),
-            (int)$_POST['qty'] * $product->price, $_POST['qty']
+            calculateTotalPriceVariants($jsonVariants),
+            (int)$_POST['qty'] * ($product->price + calculateTotalPriceVariants($jsonVariants)),
+            $_POST['qty']
         ]
     );
 }
