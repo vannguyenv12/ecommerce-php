@@ -167,6 +167,12 @@ $cartList = $db->queryAll("carts");
                 },
                 success(response) {
                     $('.cart_content').html(response);
+
+                    // decrease cart icon
+                    const cartQty = $('.cart_qty_value').val();
+                    console.log(cartQty);
+                    $('.cart_qty').text(cartQty);
+
                 }
             })
         })

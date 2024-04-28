@@ -37,4 +37,8 @@ foreach ($cartList as $cart) {
         <td class="align-middle"><button class="btn btn-sm btn-danger remove_cart" data-cart-id="<?= $cart->id ?>"><i class="fa fa-times"></i></button></td>
     </tr>
 <?php
+
 }
+?>
+
+<input type="hidden" class="cart_qty_value" name="cart_qty_value" value="<?= count($cartList) ?>" />
