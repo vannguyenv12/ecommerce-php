@@ -27,24 +27,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $jsonVariants = json_encode([$selectedVariants]);
 
-    echo $jsonVariants;
+    // get all carts
+    $user_id = $_SESSION['user']->id;
+    $carts = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
+    // check carts have product same id and variants
+    $existing_cart = null;
+    foreach ($carts as $cart) {
+        if ($cart->product_id == $product->id) {
+            if ($cart->variants == $jsonVariants) {
+                $existing_cart = $cart;
+                break;
+            }
+        }
+    }
+    // if same -> increase quantity
+    // if not -> adding product
 
-    $db->insert(
-        "carts",
-        ['user_id', 'product_id', 'product_name', 'variants', 'variant_total', 'price', 'qty'],
-        [
-            $_SESSION['user']->id, $product->id, $product->name, $jsonVariants,
-            calculateTotalPriceVariants($jsonVariants),
-            (int)$_POST['qty'] * ($product->price + calculateTotalPriceVariants($jsonVariants)),
-            $_POST['qty']
-        ]
-    );
+    if ($existing_cart) {
+        $new_qty = $existing_cart->qty + $_POST['qty'];
+        $new_total_price = $existing_cart->price + $_POST['qty'] * ($product->price + calculateTotalPriceVariants($jsonVariants));
+        $db->update(
+            "carts",
+            ['qty', 'price'],
+            [$new_qty, $new_total_price],
+            "id",
+            $existing_cart->id
+        );
+    } else {
+        $db->insert(
+            "carts",
+            ['user_id', 'product_id', 'product_name', 'variants', 'variant_total', 'price', 'qty'],
+            [
+                $user_id, $product->id, $product->name, $jsonVariants,
+                calculateTotalPriceVariants($jsonVariants),
+                (int)$_POST['qty'] * ($product->price + calculateTotalPriceVariants($jsonVariants)),
+                $_POST['qty']
+            ]
+        );
+    }
 }
 
 
 ?>
-
-
 
 <!-- Breadcrumb Start -->
 <div class="container-fluid">
