@@ -97,3 +97,15 @@ function calculateTotalPriceVariants($jsonVariants)
 
     return $totalPrice;
 }
+
+function calculateTotalCartPrice($cartList)
+{
+
+    $totalPrice = 0;
+
+    foreach ($cartList as $cart) {
+        $totalPrice += $cart->price;
+    }
+
+    return $totalPrice;
+}

@@ -6,10 +6,6 @@ require "./include/navbar.php";
 <?php
 
 $product = $db->query("products", "id", $_GET['productId']);
-// $variants = $db->customQuery("SELECT products.id as product_id ,product_variants.id, product_variants.NAME FROM product_variants
-// JOIN products ON products.id = product_variants.product_id
-// WHERE product_id = 4", "product_id", 4);
-
 $variants = $db->customQuery("SELECT products.id as product_id, product_variants.id, product_variants.NAME FROM product_variants JOIN products ON products.id = product_variants.product_id WHERE product_id = ?", [$_GET['productId']]);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -65,6 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]
         );
     }
+
+    $productId =  $_GET['productId'];
+    echo "<script>
+    sessionStorage.setItem('reloadingAddToCart', 'true');
+    window.location.href = 'detail.php?productId=$productId';</script>
+    ";
 }
 
 
@@ -450,11 +452,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
     $(document).ready(function() {
-        // $('.add_to_cart').on('click', function(e) {
-        //     e.preventDefault();
-        //     let cartQty = +$('.cart_qty').text().trim();
-        //     cartQty++;
-        //     $('.cart_qty').text(cartQty);
-        // })
-    })
+        window.onload = showMessage();
+
+        function showMessage() {
+            var reloading = sessionStorage.getItem("reloadingAddToCart");
+            if (reloading) {
+                sessionStorage.removeItem("reloadingAddToCart");
+                Toastify({
+                    text: "Add to cart Successfully",
+                    duration: 4000,
+                    gravity: "top", // `top` or `bottom`
+                    position: "center", // `left`, `center` or `right`
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    },
+                }).showToast();
+            }
+
+        }
+
+
+    });
 </script>

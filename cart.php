@@ -5,7 +5,8 @@ require "./include/navbar.php";
 ?>
 
 <?php
-$cartList = $db->queryAll("carts");
+$user_id = $_SESSION['user']->id;
+$cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
 
 ?>
 
@@ -91,17 +92,29 @@ $cartList = $db->queryAll("carts");
                 <div class="border-bottom pb-2">
                     <div class="d-flex justify-content-between mb-3">
                         <h6>Subtotal</h6>
-                        <h6>$150</h6>
+                        <h6>$
+                            <span>
+                                <?php
+                                // echo calculateTotalCartPrice($cartList);
+                                ?>
+                            </span>
+                        </h6>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <!-- <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Shipping</h6>
                         <h6 class="font-weight-medium">$10</h6>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="pt-2">
                     <div class="d-flex justify-content-between mt-2">
                         <h5>Total</h5>
-                        <h5>$160</h5>
+                        <h5>$
+                            <span class="total">
+                                <?php
+                                echo calculateTotalCartPrice($cartList);
+                                ?>
+                            </span>
+                        </h5>
                     </div>
                     <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
                 </div>
@@ -130,8 +143,28 @@ $cartList = $db->queryAll("carts");
         })
 
         $(document).on('click', '.decrement', function() {
-            updateQuantity();
+            var parentElement = $(this).closest('.quantity');
+            var inputElement = parentElement.find('input.qty');
+
+            var productBody = $(this).closest('.tr_product');
+            var productPrice = productBody.find('.product_price');
+            var variantPrice = productBody.find('.variant_price');
+            var totalPrice = productBody.find('.total_price');
+
+
+            updateQuantity(inputElement, productPrice, variantPrice, totalPrice);
         })
+
+        function updateTotalPrice() {
+            // call ajax
+            $.ajax({
+                method: 'GET',
+                url: './cart-total.php',
+                success(response) {
+                    $('.total').text(response);
+                }
+            })
+        }
 
         function updateQuantity(inputElement, productPriceEl, variantPriceEl, totalPriceEl) {
             const productQty = inputElement.val();
@@ -153,6 +186,8 @@ $cartList = $db->queryAll("carts");
 
                     const total = (productPrice + variantPrice) * qty;
                     totalPriceEl.text(total);
+                    updateTotalPrice();
+
                 }
             })
         }
@@ -172,6 +207,18 @@ $cartList = $db->queryAll("carts");
                     const cartQty = $('.cart_qty_value').val();
                     console.log(cartQty);
                     $('.cart_qty').text(cartQty);
+
+                    Toastify({
+                        text: "Remove cart Successfully",
+                        duration: 3000,
+                        gravity: "top", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                    }).showToast();
+
+                    updateTotalPrice();
 
                 }
             })

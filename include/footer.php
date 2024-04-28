@@ -87,6 +87,8 @@
 <!-- Contact Javascript File -->
 <script src="assets/mail/jqBootstrapValidation.min.js"></script>
 <script src="assets/mail/contact.js"></script>
+<script src="dist/js/iziToast.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <!-- Template Javascript -->
 <script src="assets/js/main.js"></script>
