@@ -1,8 +1,55 @@
 <?php
 require "./include/header.php";
 require "./include/topbar.php";
-
 require "./include/navbar.php";
+?>
+
+<?php
+$TOTAL_ITEMS_PER_PAGE = 6;
+
+
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+$start = ($page - 1) * $TOTAL_ITEMS_PER_PAGE;
+
+$allProducts = $db->customQuery("SELECT * FROM products", []);
+$totalItems = count($allProducts);
+
+$totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
+
+$products = $db->customQuery("SELECT * FROM products LIMIT $start, $TOTAL_ITEMS_PER_PAGE", []);
+
+if (isset($_GET['price_range'])) {
+    $priceRanges = $_GET['price_range'];
+    $whereClause = '';
+
+    foreach ($priceRanges as $range) {
+        list($min, $max) = explode('_', $range);
+        $whereClause .= "(price >= $min AND price <= $max) OR ";
+    }
+
+    $whereClause = rtrim($whereClause, 'OR ');
+
+    $query = "SELECT * FROM products WHERE $whereClause";
+
+    $products = $db->customQuery($query, []);
+
+    $totalItems = count($products);
+
+    $totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
+}
+
+if (isset($_GET['category'])) {
+
+    $query = "SELECT * FROM products WHERE category_id = ?";
+
+    $products = $db->customQuery($query, [$_GET['category']]);
+
+    $totalItems = count($products);
+
+    $totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
+}
+
 ?>
 
 
@@ -30,116 +77,42 @@ require "./include/navbar.php";
             <!-- Price Start -->
             <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by price</span></h5>
             <div class="bg-light p-4 mb-30">
-                <form>
+                <form method="GET" action="">
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="price-all">
+                        <input type="radio" class="custom-control-input" checked id="price-all" name="price_range[]" value="0_99999">
                         <label class="custom-control-label" for="price-all">All Price</label>
                         <span class="badge border font-weight-normal">1000</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-1">
+                        <input type="radio" class="custom-control-input" id="price-1" name="price_range[]" value="0_100">
                         <label class="custom-control-label" for="price-1">$0 - $100</label>
                         <span class="badge border font-weight-normal">150</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-2">
+                        <input type="radio" class="custom-control-input" id="price-2" name="price_range[]" value="100_200">
                         <label class="custom-control-label" for="price-2">$100 - $200</label>
                         <span class="badge border font-weight-normal">295</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-3">
+                        <input type="radio" class="custom-control-input" id="price-3" name="price_range[]" value="200_300">
                         <label class="custom-control-label" for="price-3">$200 - $300</label>
                         <span class="badge border font-weight-normal">246</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-4">
+                        <input type="radio" class="custom-control-input" id="price-4" name="price_range[]" value="300_400">
                         <label class="custom-control-label" for="price-4">$300 - $400</label>
                         <span class="badge border font-weight-normal">145</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="price-5">
-                        <label class="custom-control-label" for="price-5">$400 - $500</label>
+                        <input type="radio" class="custom-control-input" id="price-5" name="price_range[]" value="400_99999">
+                        <label class="custom-control-label" for="price-5">$400 - MAX</label>
                         <span class="badge border font-weight-normal">168</span>
                     </div>
+                    <input type="hidden" name="page" value="1" />
+                    <button type="submit" class="btn btn-primary">Filter</button>
                 </form>
             </div>
             <!-- Price End -->
-
-            <!-- Color Start -->
-            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by color</span></h5>
-            <div class="bg-light p-4 mb-30">
-                <form>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="color-all">
-                        <label class="custom-control-label" for="price-all">All Color</label>
-                        <span class="badge border font-weight-normal">1000</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-1">
-                        <label class="custom-control-label" for="color-1">Black</label>
-                        <span class="badge border font-weight-normal">150</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-2">
-                        <label class="custom-control-label" for="color-2">White</label>
-                        <span class="badge border font-weight-normal">295</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-3">
-                        <label class="custom-control-label" for="color-3">Red</label>
-                        <span class="badge border font-weight-normal">246</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-4">
-                        <label class="custom-control-label" for="color-4">Blue</label>
-                        <span class="badge border font-weight-normal">145</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="color-5">
-                        <label class="custom-control-label" for="color-5">Green</label>
-                        <span class="badge border font-weight-normal">168</span>
-                    </div>
-                </form>
-            </div>
-            <!-- Color End -->
-
-            <!-- Size Start -->
-            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by size</span></h5>
-            <div class="bg-light p-4 mb-30">
-                <form>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="size-all">
-                        <label class="custom-control-label" for="size-all">All Size</label>
-                        <span class="badge border font-weight-normal">1000</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-1">
-                        <label class="custom-control-label" for="size-1">XS</label>
-                        <span class="badge border font-weight-normal">150</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-2">
-                        <label class="custom-control-label" for="size-2">S</label>
-                        <span class="badge border font-weight-normal">295</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-3">
-                        <label class="custom-control-label" for="size-3">M</label>
-                        <span class="badge border font-weight-normal">246</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-4">
-                        <label class="custom-control-label" for="size-4">L</label>
-                        <span class="badge border font-weight-normal">145</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="size-5">
-                        <label class="custom-control-label" for="size-5">XL</label>
-                        <span class="badge border font-weight-normal">168</span>
-                    </div>
-                </form>
-            </div>
-            <!-- Size End -->
         </div>
         <!-- Shop Sidebar End -->
 
@@ -175,9 +148,9 @@ require "./include/navbar.php";
                 </div>
 
                 <?php
-                $products = $db->queryAll("products");
-
-                foreach ($products as $product) {
+                if (count($products) <= 0) echo '<p class="text-center">Not found any products</p>';
+                else
+                    foreach ($products as $product) {
                 ?>
 
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
@@ -222,7 +195,7 @@ require "./include/navbar.php";
 
                 <?php
 
-                }
+                    }
                 ?>
 
                 <!-- <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
@@ -257,11 +230,20 @@ require "./include/navbar.php";
                 <div class="col-12">
                     <nav>
                         <ul class="pagination justify-content-center">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</span></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $page - 1; ?>">Previous</span></a></li>
+                            <?php
+
+
+                            for ($i = 1; $i <= $totalPages; $i++) {
+                            ?>
+                                <li class="page-item <?= $page == $i ? 'active' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $i; ?>"><?= $i; ?></a></li>
+
+                            <?php
+                            }
+
+                            ?>
+
+                            <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $page + 1; ?>">Next</a></li>
                         </ul>
                     </nav>
                 </div>
