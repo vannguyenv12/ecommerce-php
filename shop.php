@@ -19,36 +19,58 @@ $totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
 
 $products = $db->customQuery("SELECT * FROM products LIMIT $start, $TOTAL_ITEMS_PER_PAGE", []);
 
-if (isset($_GET['price_range'])) {
+$queryResult = "SELECT * FROM products";
+$queryLimit = " LIMIT $start, $TOTAL_ITEMS_PER_PAGE";
+
+
+if (!empty($_GET['price_range']) && !empty($_GET['price_range'][0])) {
     $priceRanges = $_GET['price_range'];
     $whereClause = '';
 
     foreach ($priceRanges as $range) {
         list($min, $max) = explode('_', $range);
-        $whereClause .= "(price >= $min AND price <= $max) OR ";
+        $whereClause .= "(offer_price >= $min AND offer_price <= $max) OR ";
     }
 
     $whereClause = rtrim($whereClause, 'OR ');
 
+    $queryResult .= " WHERE $whereClause" . $queryLimit;
     $query = "SELECT * FROM products WHERE $whereClause";
 
-    $products = $db->customQuery($query, []);
+    $products = $db->customQuery($queryResult, []);
+    $productsNotLimited = $db->customQuery($query, []);
 
-    $totalItems = count($products);
+    $totalItems = count($productsNotLimited);
 
     $totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
 }
 
-if (isset($_GET['category'])) {
+if (!empty($_GET['category'])) {
 
     $query = "SELECT * FROM products WHERE category_id = ?";
+    $queryResult .= " WHERE category_id = ?" . $queryLimit;
 
-    $products = $db->customQuery($query, [$_GET['category']]);
+    $products = $db->customQuery($queryResult, [$_GET['category']]);
+    $productsNotLimited = $db->customQuery($query, [$_GET['category']]);
 
-    $totalItems = count($products);
+
+    $totalItems = count($productsNotLimited);
 
     $totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
 }
+
+if (!empty($_GET['q'])) {
+    $query = "SELECT * FROM products WHERE name LIKE CONCAT('%', ?, '%')";
+    $queryResult .= " WHERE name LIKE CONCAT('%', ?, '%')" . $queryLimit;
+
+    $products = $db->customQuery($queryResult, [$_GET['q']]);
+    $productsNotLimited = $db->customQuery($query, [$_GET['q']]);
+
+    $totalItems = count($productsNotLimited);
+
+    $totalPages = ceil($totalItems / $TOTAL_ITEMS_PER_PAGE);
+}
+
 
 ?>
 
@@ -230,20 +252,24 @@ if (isset($_GET['category'])) {
                 <div class="col-12">
                     <nav>
                         <ul class="pagination justify-content-center">
-                            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $page - 1; ?>">Previous</span></a></li>
+                            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $page - 1; ?>&q=<?= $_GET['q'] ?? '' ?>&price_range[]=<?= $_GET['price_range'][0] ?? '' ?>&category=<?= $_GET['category'] ?? '' ?>"">Previous</span></a></li>
                             <?php
 
 
                             for ($i = 1; $i <= $totalPages; $i++) {
                             ?>
-                                <li class="page-item <?= $page == $i ? 'active' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                <li class=" page-item <?= $page == $i ? 'active' : '' ?> ">
+                                    <a class=" page-link" href="./shop.php?page=<?= $i; ?>&q=<?= $_GET['q'] ?? '' ?>&price_range[]=<?= $_GET['price_range'][0] ?? '' ?>&category=<?= $_GET['category'] ?? '' ?>">
+                                    <?= $i; ?>
+                                </a>
+                            </li>
 
-                            <?php
+                        <?php
                             }
 
-                            ?>
+                        ?>
 
-                            <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $page + 1; ?>">Next</a></li>
+                        <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?> "><a class="page-link" href="./shop.php?page=<?= $page + 1; ?>&q=<?= $_GET['q'] ?? '' ?>&price_range[]=<?= $_GET['price_range'][0] ?? '' ?>&category=<?= $_GET['category'] ?? '' ?>">Next</a></li>
                         </ul>
                     </nav>
                 </div>

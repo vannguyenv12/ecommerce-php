@@ -80,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </form>
                             <p class="create_account">Dont’t have an account ? <a href="./signup.php">SignUp</a></p>
+                            <p class="create_account">Forget password ? <a href="./forget-password.php">Forget Password</a></p>
                         </div>
                     </div>
                 </div>

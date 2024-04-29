@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 ?>
 
 <!-- Topbar Start -->
@@ -57,13 +58,14 @@ session_start();
             </a>
         </div>
         <div class="col-lg-4 col-6 text-left">
-            <form action="">
+            <form action="../shop.php">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for products">
+                    <input type="text" name="q" class="form-control" value="<?= $_GET['q'] ?? '' ?>" placeholder="Search for products">
                     <div class="input-group-append">
-                        <span class="input-group-text bg-transparent text-primary">
+                        <button class="input-group-text bg-transparent text-primary">
                             <i class="fa fa-search"></i>
-                        </span>
+                        </button>
+                        <input type="hidden" name="page" value="1" />
                     </div>
                 </div>
             </form>
