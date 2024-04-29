@@ -58,10 +58,14 @@ $db = new Database();
                             <i class="fas fa-shopping-cart text-primary"></i>
                             <span class="badge text-secondary border border-secondary rounded-circle cart_qty" style="padding-bottom: 2px;">
                                 <?php
-                                $user_id = $_SESSION['user']->id;
-                                $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
+                                if (!isset($_SESSION['user'])) {
+                                    echo 0;
+                                } else {
+                                    $user_id = $_SESSION['user']->id;
+                                    $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
 
-                                echo count($cartList)
+                                    echo count($cartList);
+                                }
                                 ?>
                             </span>
                         </a>

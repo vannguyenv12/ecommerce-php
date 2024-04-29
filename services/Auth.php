@@ -64,16 +64,51 @@ class Auth
     {
         $db = new Database();
         if (!$db->exists('users', 'username', $username)) {
-            echo "Username does not exist.";
-            return;
+            return null;
         }
 
         $user = $db->query('users', 'username', $username);
+
+        if ($user->status === 'inactive') {
+            return null;
+        }
 
         if (password_verify($password, $user->password)) {
             return $user;
         } else {
             return null;
         }
+    }
+
+    public static function findUserByEmail($email)
+    {
+        $db = new Database();
+        if (!$db->exists('users', 'email', $email)) {
+            return null;
+        }
+
+        $user = $db->query('users', 'email', $email);
+
+        if ($user->status === 'inactive') {
+            return null;
+        }
+
+        return $user;
+    }
+
+    public static function findUserByToken($token)
+    {
+        $db = new Database();
+        if (!$db->exists('users', 'reset_password_token', $token)) {
+            return null;
+        }
+
+        $user = $db->query('users', 'reset_password_token', $token);
+
+        if ($user->status === 'inactive') {
+            return null;
+        }
+
+        return $user;
     }
 }

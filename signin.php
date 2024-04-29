@@ -4,12 +4,19 @@ require basePath('config/database.php');
 require basePath('services/Auth.php');
 session_start();
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = Auth::signIn($_POST['username'], $_POST['password']);
 
-    $_SESSION['user'] = $user;
-
-    header('location: ./index.php');
+    if (isset($user)) {
+        $_SESSION['user'] = $user;
+        header('location: ./index.php');
+    } else {
+        echo "<script>
+        sessionStorage.setItem('isInvalidCredentials', 'true');
+        window.location.href = './signin.php';</script>
+        ";
+    }
 }
 ?>
 
@@ -29,6 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="frontend-template/css/venobox.min.css">
     <link rel="stylesheet" href="frontend-template/css/animate.css">
     <link rel="stylesheet" href="frontend-template/css/jquery.exzoom.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
     <link rel="stylesheet" href="frontend-template/css/style.css">
     <link rel="stylesheet" href="frontend-template/css/responsive.css">
@@ -96,34 +105,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <!--jquery library js-->
-    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="frontend-template/js/jquery-3.6.0.min.js"></script>
     <!--bootstrap js-->
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="frontend-template/js/bootstrap.bundle.min.js"></script>
     <!--font-awesome js-->
-    <script src="js/Font-Awesome.js"></script>
+    <script src="frontend-template/js/Font-Awesome.js"></script>
     <!-- slick slider -->
-    <script src="js/slick.min.js"></script>
+    <script src="frontend-template/js/slick.min.js"></script>
     <!-- isotop js -->
-    <script src="js/isotope.pkgd.min.js"></script>
+    <script src="frontend-template/js/isotope.pkgd.min.js"></script>
     <!-- simplyCountdownjs -->
-    <script src="js/simplyCountdown.js"></script>
+    <script src="frontend-template/js/simplyCountdown.js"></script>
     <!-- counter up js -->
-    <script src="js/jquery.waypoints.min.js"></script>
-    <script src="js/jquery.countup.min.js"></script>
+    <script src="frontend-template/js/jquery.waypoints.min.js"></script>
+    <script src="frontend-template/js/jquery.countup.min.js"></script>
     <!-- nice select js -->
-    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="frontend-template/js/jquery.nice-select.min.js"></script>
     <!-- venobox js -->
-    <script src="js/venobox.min.js"></script>
+    <script src="frontend-template/js/venobox.min.js"></script>
     <!-- sticky sidebar js -->
-    <script src="js/sticky_sidebar.js"></script>
+    <script src="frontend-template/js/sticky_sidebar.js"></script>
     <!-- wow js -->
-    <script src="js/wow.min.js"></script>
+    <script src="frontend-template/js/wow.min.js"></script>
     <!-- ex zoom js -->
-    <script src="js/jquery.exzoom.js"></script>
+    <script src="frontend-template/js/jquery.exzoom.js"></script>
 
     <!--main/custom js-->
-    <script src="js/main.js"></script>
+    <script src="frontend-template/js/main.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+
+    <script>
+        $(document).ready(function() {
+            window.onload = showMessage();
+
+            function showMessage() {
+                var reloading = sessionStorage.getItem("isInvalidCredentials");
+                if (reloading) {
+                    sessionStorage.removeItem("isInvalidCredentials");
+                    Toastify({
+                        text: "Invalid Credentials",
+                        duration: 4000,
+                        gravity: "top", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        style: {
+                            background: "red",
+                        },
+                    }).showToast();
+                }
+
+            }
+
+
+        });
+    </script>
 </body>
 
 </html>
