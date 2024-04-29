@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require "./include/header.php";
 require "./include/topbar.php";
 require "./include/navbar.php";
@@ -9,6 +10,11 @@ $product = $db->query("products", "id", $_GET['productId']);
 $variants = $db->customQuery("SELECT products.id as product_id, product_variants.id, product_variants.NAME FROM product_variants JOIN products ON products.id = product_variants.product_id WHERE product_id = ?", [$_GET['productId']]);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!isset($_SESSION['user'])) {
+        header('Location: ./signin.php');
+    }
+
     $selectedVariants = [];
 
     $variantsFromDB = getAllVariantsName();
@@ -157,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             foreach ($variantItems as $item) {
                             ?>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="<?= $item->name ?>" name="<?= $variant->NAME ?>" value="<?= $item->name ?>|<?= $item->price ?>">
+                                    <input type="radio" class="custom-control-input" checked id="<?= $item->name ?>" name="<?= $variant->NAME ?>" value="<?= $item->name ?>|<?= $item->price ?>">
                                     <label class="custom-control-label" for="<?= $item->name ?>"><?= $item->name ?> ($<span><?= $item->price ?></span>) </label>
                                 </div>
                             <?php

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require "./include/header.php";
 require "./include/topbar.php";
 require "./include/navbar.php";
@@ -9,6 +10,11 @@ use Omnipay\Omnipay;
 ?>
 
 <?php
+
+if (!isset($_SESSION['user'])) {
+    header('Location: ./signin.php');
+}
+
 $user_id = $_SESSION['user']->id;
 $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]);
 

@@ -1,7 +1,13 @@
 <?php
+ob_start();
 require "./include/header.php";
 require "./include/topbar.php";
 require "./include/navbar.php";
+
+if (!isset($_SESSION['user'])) {
+    header('Location: ./signin.php');
+}
+
 ?>
 
 <?php
