@@ -1,9 +1,14 @@
 <?php require_once "../helpers.php"; ?>
 <?php require_once basePath('config/database.php'); ?>
 <?php require_once basePath('services/index.php'); ?>
-<?php session_start(); ?>
+<?php session_start();
+ob_start(); ?>
 <?php $db = new Database();  ?>
 <?php
+
+if (!isset($_SESSION['user']) || $_SESSION['user']?->role !== 'admin') {
+    header('location: ../index.php');
+}
 
 $success = '
     <script>
