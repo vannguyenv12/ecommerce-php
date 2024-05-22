@@ -119,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $(document).ready(function() {
         $('.delete').click(function(e) {
             e.preventDefault();
+
             $('#myModal').modal('show');
             const variantId = $(this).attr("data-id");
 

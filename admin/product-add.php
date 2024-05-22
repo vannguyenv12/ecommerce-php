@@ -4,6 +4,34 @@
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+
+    $validateFields = [
+        'name' => 'Name is required',
+        'price' => 'Price must be number',
+        "offer_price" => 'Offer Price must be number',
+        "qty" => 'Quantity must be number',
+        "category_id" => 'Category must selected',
+        "brand_id" => 'Brand must selected',
+        "short_description" => 'Short description is required',
+        "long_description" => 'Long description is required',
+        "status" => 'Status is required',
+        "image" => 'Image is required'
+    ];
+
+    foreach ($validateFields as $key => $field) {
+        if (empty($_POST[$key])) {
+            echo toastErrorMessage($field);
+
+            echo '<script> 
+            setTimeout(() => {
+                window.location.href = "./product-add.php" 
+            }, 2000)
+            </script>
+            ';
+        }
+    }
+
     $uploadDirectory = '../uploads';
 
     if ($_FILES['image'] && $_FILES['image']['error'] === UPLOAD_ERR_OK) {

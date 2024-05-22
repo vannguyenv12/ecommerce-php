@@ -157,6 +157,13 @@ $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]
             var variantPrice = productBody.find('.variant_price');
             var totalPrice = productBody.find('.total_price');
 
+            const qtyNum = parseInt(inputElement.val());
+
+
+            if (qtyNum <= 1) {
+                inputElement.val(1);
+            }
+
 
             updateQuantity(inputElement, productPrice, variantPrice, totalPrice);
         })

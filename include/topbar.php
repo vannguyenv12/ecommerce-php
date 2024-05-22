@@ -23,7 +23,7 @@ session_start();
                     if (isset($_SESSION['user'])) {
                     ?>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" target="_blank" href="./user/index.php">My Dashboard</a>
+                            <a class="dropdown-item" target="_blank" href="./<?= $_SESSION['user']->role ?>/index.php">My Dashboard</a>
                             <a class="dropdown-item" href="./logout.php">Logout</a>
                         </div>
                     <?php

@@ -89,6 +89,45 @@ $error = '
     }).showToast();
     </script>
     ';
+
+function toastErrorMessage($message)
+{
+    $error = "
+    <script>
+    Toastify({
+
+        text: '$message',
+        duration: 5000,
+        gravity: 'center',
+        position: 'right',
+        style: {
+            background: 'red',
+            height: '30px',
+            padding: '5px 5px',
+        },
+
+    }).showToast();
+    </script>
+    ";
+
+    return $error;
+}
+
+$error = '
+    <script>
+    Toastify({
+
+        text: "Error, Please Upload Image",
+        duration: 5000,
+        gravity: "top", // `top` or `bottom`
+        position: "center", // `left`, `center` or `right`
+        style: {
+            background: "red",
+        },
+
+    }).showToast();
+    </script>
+    ';
 ?>
 
 <!DOCTYPE html>

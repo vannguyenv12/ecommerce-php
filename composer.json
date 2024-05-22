@@ -1,12 +1,12 @@
 {
-    "require": {
-        "league/omnipay": "^3.2",
-        "omnipay/paypal": "^3.0",
-        "phpmailer/phpmailer": "^6.9"
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
+  "require": {
+    "league/omnipay": "^3.2",
+    "omnipay/paypal": "^3.0",
+    "phpmailer/phpmailer": "^6.9"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
     }
+  }
 }

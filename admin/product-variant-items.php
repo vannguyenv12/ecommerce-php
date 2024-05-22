@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 <td>$<?= $item->price ?></td>
                                                 <td class="pt_10 pb_10">
                                                     <a href="" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal_1"><i class="fas fa-eye"></i></a>
-                                                    <a href="" class="btn btn-danger delete" data-id="<?= $variant->id; ?>"><i class="fas fa-trash"></i></a>
+                                                    <a href="" class="btn btn-danger delete" data-id="<?= $item->id; ?>"><i class="fas fa-trash"></i></a>
                                                 </td>
                                                 <div class="modal fade" id="modal_1" tabindex="-1" aria-hidden="true">
                                                     <div class="modal-dialog">
