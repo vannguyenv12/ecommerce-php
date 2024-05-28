@@ -54,9 +54,11 @@ $order = $db->query("orders", "invoice_id", $_GET["invoiceId"]);
                                         <th class="text-right">Subtotal</th>
                                     </tr>
                                     <?php
-                                    $orderProducts = $db->queryAll("order_products", "invoice_id", $_GET['invoiceId']);
+                                    $orderProducts = $db->customQuery("SELECT * FROM order_products WHERE order_id = ? ", [$order->id]);
                                     foreach ($orderProducts as $item) {
+
                                     ?>
+
                                         <tr>
                                             <td><?= $item->id ?></td>
                                             <td><?= $item->product_name ?></td>

@@ -73,10 +73,10 @@ if (isset($_POST['form_paypal'])) {
 
     // Find order
     $order = $db->query("orders", "invoice_id", $invoiceId);
-
     // Cart
 
     foreach ($cartList as $cart) {
+
         $db->insert(
             "order_products",
             [
@@ -92,6 +92,8 @@ if (isset($_POST['form_paypal'])) {
 
     // Remove All Cart
     $db->delete("carts", "user_id", $_SESSION['user']->id);
+
+    header('Location: ./index.php');
 }
 
 

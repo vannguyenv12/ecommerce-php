@@ -4,7 +4,7 @@ require "./include/header.php";
 $cart = $db->query("carts", 'id', $_POST['cart_id']);
 $productByCart = $db->query("products", "id", $cart->product_id);
 
-$productPrice = $productByCart->price;
+$productPrice = $productByCart?->offer_price;
 $variantPrice = $cart->variant_total;
 
 $total = ($productPrice + $variantPrice) * (int)$_POST['qty'];

@@ -11,11 +11,10 @@
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img alt="image" src="uploads/user.jpg" class="rounded-circle-custom">
+                <img alt="image" src="../../uploads/users/<?= $_SESSION['user']->image ?>" class="rounded-circle-custom">
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="profile.php"><i class="far fa-user"></i> Edit Profile</a></li>
-                <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </li>
     </ul>

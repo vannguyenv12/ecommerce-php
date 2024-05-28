@@ -4,36 +4,57 @@
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $uploadDirectory = '../uploads/categories';
 
-    if ($_FILES['image'] && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $uploadedFileName = uploadImage($_FILES['image'], $uploadDirectory);
-        if ($uploadedFileName !== false) {
-            // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
-        } else {
-            echo $error;
+
+    $validateFields = [
+        'name' => 'Name is required',
+    ];
+
+    $errorMessages = [];
+
+    foreach ($validateFields as $key => $field) {
+        if (empty($_POST[$key])) {
+            $errorMessages[$key] = $field;
         }
-    } else {
-        echo $error;
-        exit;
     }
 
-    $db->insert(
-        'categories',
-        [
-            "name",
-            "status",
-            "image"
-        ],
-        [
-            $_POST["name"],
-            $_POST["status"],
-            $uploadedFileName
+    if (empty($_FILES['image']['name'])) {
+        $errorMessages['image'] = 'Image is required';
+    }
 
-        ]
-    );
+    if (count($errorMessages) <= 0) {
 
-    echo $success;
+        $uploadDirectory = '../uploads/categories';
+
+        if ($_FILES['image'] && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $uploadedFileName = uploadImage($_FILES['image'], $uploadDirectory);
+            if ($uploadedFileName !== false) {
+                // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
+            } else {
+                echo $error;
+            }
+        } else {
+            echo $error;
+            exit;
+        }
+
+        $db->insert(
+            'categories',
+            [
+                "name",
+                "status",
+                "image"
+            ],
+            [
+                $_POST["name"],
+                $_POST["status"],
+                $uploadedFileName
+
+            ]
+        );
+
+        echo $success;
+    }
 }
 
 ?>
@@ -59,6 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="form-group mb-3">
                                             <label>Name</label>
                                             <input type="text" class="form-control" name="name" value="">
+                                            <span class="text-danger"><?= $errorMessages['name'] ?? ''; ?></span>
+
                                         </div>
                                     </div>
                                 </div>
@@ -76,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div>
                                         <input type="file" name="image">
                                     </div>
+                                    <span class="text-danger"><?= $errorMessages['image'] ?? ''; ?></span>
+
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Create</button>

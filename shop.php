@@ -178,7 +178,7 @@ if (!empty($_GET['q'])) {
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                         <div class="product-item bg-light mb-4">
                             <div class="product-img position-relative overflow-hidden">
-                                <img class="img-fluid w-100" src="./uploads/<?= $product->thumb_image ?>" alt="product">
+                                <img class="img-fluid w-100" style="height: 300px !important;" src="./uploads/<?= $product->thumb_image ?>" alt="product">
                                 <div class="product-action">
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>

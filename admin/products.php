@@ -34,8 +34,8 @@
                                             <tr>
                                                 <td><?= $product->id ?></td>
                                                 <td><?= $product->name ?></td>
-                                                <td><?= $product->price ?></td>
-                                                <td><?= $product->offer_price ?></td>
+                                                <td>$<?= $product->price ?></td>
+                                                <td>$<?= $product->offer_price ?></td>
                                                 <td><?= $product->status ?></td>
                                                 <td class="pt_10 pb_10">
                                                     <a href="./product-variants.php?id=<?= $product->id ?>" class="btn btn-warning"><i class="fas fa-eye"></i></a>
@@ -94,6 +94,7 @@
 <script>
     $(document).ready(function() {
         $('.delete').click(function(e) {
+            console.log('delete click')
             e.preventDefault();
             $('#myModal').modal('show');
             const productId = $(this).attr("data-id");
@@ -111,8 +112,6 @@
                     }
                 });
             })
-
-
         });
 
 

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($existing_cart) {
         $new_qty = $existing_cart->qty + $_POST['qty'];
-        $new_total_price = $existing_cart->price + $_POST['qty'] * ($product->price + calculateTotalPriceVariants($jsonVariants));
+        $new_total_price = $existing_cart->offer_price + $_POST['qty'] * ($product?->offer_price + calculateTotalPriceVariants($jsonVariants));
         $db->update(
             "carts",
             ['qty', 'price'],
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             [
                 $user_id, $product->id, $product->name, $jsonVariants,
                 calculateTotalPriceVariants($jsonVariants),
-                (int)$_POST['qty'] * ($product->price + calculateTotalPriceVariants($jsonVariants)),
+                (int)$_POST['qty'] * ($product?->offer_price + calculateTotalPriceVariants($jsonVariants)),
                 $_POST['qty']
             ]
         );

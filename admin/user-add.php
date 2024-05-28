@@ -6,51 +6,73 @@
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Check password match
-    if ($_POST['new_password'] !== $_POST['retype_password']) {
-        echo $error;
-        exit;
+    $validateFields = [
+        'name' => 'Name is required',
+        'username' => 'Username is required',
+        "email" => 'Email Price must be number',
+        "status" => 'status is required'
+    ];
+
+    $errorMessages = [];
+
+    foreach ($validateFields as $key => $field) {
+        if (empty($_POST[$key])) {
+            $errorMessages[$key] = $field;
+        }
+    }
+
+    if (empty($_FILES['photo']['name'])) {
+        $errorMessages['photo'] = 'Photo is required';
     }
 
 
-    $uploadDirectory = '../uploads/users';
-
-    print_r($_FILES);
-    if ($_FILES['photo'] && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $uploadedFileName = uploadImage($_FILES['photo'], $uploadDirectory);
-        if ($uploadedFileName !== false) {
-            // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
-        } else {
+    if (count($errorMessages) <= 0) {
+        // Check password match
+        if ($_POST['new_password'] !== $_POST['retype_password']) {
             echo $error;
             exit;
         }
-    } else {
+
+
+        $uploadDirectory = '../uploads/users';
+
+        // print_r($_FILES);
+        if ($_FILES['photo'] && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $uploadedFileName = uploadImage($_FILES['photo'], $uploadDirectory);
+            if ($uploadedFileName !== false) {
+                // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
+            } else {
+                echo $error;
+                exit;
+            }
+        } else {
+        }
+
+        $hashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+
+        $db->insert(
+            'users',
+            [
+                "status",
+                "name",
+                "username",
+                "email",
+                "password",
+                "image"
+            ],
+            [
+                $_POST['status'],
+                $_POST["name"],
+                $_POST["username"],
+                $_POST["email"],
+                $hashedPassword,
+                $uploadedFileName
+
+            ]
+        );
+
+        echo $success;
     }
-
-    $hashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-
-    $db->insert(
-        'users',
-        [
-            "status",
-            "name",
-            "username",
-            "email",
-            "password",
-            "image"
-        ],
-        [
-            $_POST['status'],
-            $_POST["name"],
-            $_POST["username"],
-            $_POST["email"],
-            $hashedPassword,
-            $uploadedFileName
-
-        ]
-    );
-
-    echo $success;
 }
 
 ?>
@@ -72,6 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="col-md-3">
                                         <img id="previewImage" src="" alt="" class="profile-photo w_100_p">
                                         <input type="file" class="mt_10" name="photo" id="photoInput">
+                                        <span class="text-danger"><?= $errorMessages['photo'] ?? ''; ?></span>
+
                                     </div>
                                     <div class="col-md-9">
                                         <div class="mb-4">
@@ -80,18 +104,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 <option value="active">Active</option>
                                                 <option value="inactive">In-Active</option>
                                             </select>
+                                            <span class="text-danger"><?= $errorMessages['status'] ?? ''; ?></span>
+
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Name *</label>
                                             <input type="text" class="form-control" name="name" value="">
+                                            <span class="text-danger"><?= $errorMessages['name'] ?? ''; ?></span>
+
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Username *</label>
                                             <input type="text" class="form-control" name="username" value="">
+                                            <span class="text-danger"><?= $errorMessages['username'] ?? ''; ?></span>
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Email *</label>
                                             <input type="text" class="form-control" name="email" value="">
+                                            <span class="text-danger"><?= $errorMessages['email'] ?? ''; ?></span>
+
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Password</label>

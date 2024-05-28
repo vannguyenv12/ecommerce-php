@@ -4,37 +4,58 @@
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $uploadDirectory = '../uploads/brands';
 
-    if ($_FILES['logo'] && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-        $uploadedFileName = uploadImage($_FILES['logo'], $uploadDirectory);
-        if ($uploadedFileName !== false) {
-            // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
+    $validateFields = [
+        'name' => 'Name is required',
+    ];
+
+    $errorMessages = [];
+
+    foreach ($validateFields as $key => $field) {
+        if (empty($_POST[$key])) {
+            $errorMessages[$key] = $field;
+        }
+    }
+
+    if (empty($_FILES['image']['name'])) {
+        $errorMessages['image'] = 'Image is required';
+    }
+
+
+    if (count($errorMessages) <= 0) {
+
+        $uploadDirectory = '../uploads/brands';
+
+        if ($_FILES['logo'] && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+            $uploadedFileName = uploadImage($_FILES['logo'], $uploadDirectory);
+            if ($uploadedFileName !== false) {
+                // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
+            } else {
+                echo $error;
+                exit;
+            }
         } else {
             echo $error;
             exit;
         }
-    } else {
-        echo $error;
-        exit;
+
+        $db->insert(
+            'brands',
+            [
+                "name",
+                "status",
+                "logo"
+            ],
+            [
+                $_POST["name"],
+                $_POST["status"],
+                $uploadedFileName
+
+            ]
+        );
+
+        echo $success;
     }
-
-    $db->insert(
-        'brands',
-        [
-            "name",
-            "status",
-            "logo"
-        ],
-        [
-            $_POST["name"],
-            $_POST["status"],
-            $uploadedFileName
-
-        ]
-    );
-
-    echo $success;
 }
 
 ?>
@@ -60,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="form-group mb-3">
                                             <label>Name</label>
                                             <input type="text" class="form-control" name="name" value="">
+                                            <span class="text-danger"><?= $errorMessages['name'] ?? ''; ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -77,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div>
                                         <input type="file" name="logo">
                                     </div>
+                                    <span class="text-danger"><?= $errorMessages['image'] ?? ''; ?></span>
+
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Create</button>

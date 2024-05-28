@@ -55,7 +55,19 @@ $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]
                     ?>
                         <tr class="tr_product">
                             <td class="align-middle"><img src="./uploads/<?= $product->thumb_image ?>" alt="" style="width: 100px !important; height: 70px !important;"> <?= $cart->product_name ?></td>
-                            <td class="align-middle">$<span class="product_price"><?= $product->price ?></span></td>
+                            <td class="align-middle">$<span class="product_price">
+                                    <?php
+                                    if (isset($product->offer_price)) {
+                                    ?>
+                                        <?= $product->offer_price ?>
+                                    <?php
+                                    } else {
+                                    ?>
+                                        <?= $product->price ?>
+                                    <?php
+                                    }
+                                    ?>
+                                </span></td>
                             <td class="align-middle">$<span class="variant_price"><?= $cart->variant_total ?></span></td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
@@ -72,7 +84,10 @@ $cartList = $db->customQuery("SELECT * FROM carts WHERE user_id = ?", [$user_id]
                                     </div>
                                 </div>
                             </td>
-                            <td class="align-middle">$<span class="total_price"><?= $cart->price ?></span></td>
+                            <td class="align-middle">$<span class="total_price">
+                                    <?= $cart->price ?>
+
+                                </span></td>
                             <td class="align-middle"><button class="btn btn-sm btn-danger remove_cart" data-cart-id="<?= $cart->id ?>"><i class="fa fa-times"></i></button></td>
                         </tr>
                     <?php

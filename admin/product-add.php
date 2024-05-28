@@ -16,66 +16,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "short_description" => 'Short description is required',
         "long_description" => 'Long description is required',
         "status" => 'Status is required',
-        "image" => 'Image is required'
     ];
+
+    $errorMessages = [];
 
     foreach ($validateFields as $key => $field) {
         if (empty($_POST[$key])) {
-            echo toastErrorMessage($field);
-
-            echo '<script> 
-            setTimeout(() => {
-                window.location.href = "./product-add.php" 
-            }, 2000)
-            </script>
-            ';
+            $errorMessages[$key] = $field;
         }
     }
 
-    $uploadDirectory = '../uploads';
+    if (empty($_FILES['image']['name'])) {
+        $errorMessages['image'] = 'Image is required';
+    }
 
-    if ($_FILES['image'] && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $uploadedFileName = uploadImage($_FILES['image'], $uploadDirectory);
-        if ($uploadedFileName !== false) {
-            // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
+    if (count($errorMessages) <= 0) {
+        $uploadDirectory = '../uploads';
+
+        if ($_FILES['image'] && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $uploadedFileName = uploadImage($_FILES['image'], $uploadDirectory);
+            if ($uploadedFileName !== false) {
+                // echo 'Hình ảnh đã được tải lên thành công với tên: ' . $uploadedFileName;
+            } else {
+                echo $error;
+            }
         } else {
             echo $error;
+            // exit;
         }
-    } else {
-        echo $error;
-        exit;
+
+        $db->insert(
+            'products',
+            [
+                "name",
+                "price",
+                "offer_price",
+                "qty",
+                "category_id",
+                "brand_id",
+                "short_description",
+                "long_description",
+                "status",
+                "thumb_image"
+            ],
+            [
+                $_POST["name"],
+                $_POST["price"],
+                $_POST["offer_price"],
+                $_POST["qty"],
+                $_POST["category_id"],
+                $_POST["brand_id"],
+                $_POST["short_description"],
+                $_POST["long_description"],
+                $_POST["status"],
+                $uploadedFileName
+
+            ]
+        );
+
+        echo $success;
     }
-
-    $db->insert(
-        'products',
-        [
-            "name",
-            "price",
-            "offer_price",
-            "qty",
-            "category_id",
-            "brand_id",
-            "short_description",
-            "long_description",
-            "status",
-            "thumb_image"
-        ],
-        [
-            $_POST["name"],
-            $_POST["price"],
-            $_POST["offer_price"],
-            $_POST["qty"],
-            $_POST["category_id"],
-            $_POST["brand_id"],
-            $_POST["short_description"],
-            $_POST["long_description"],
-            $_POST["status"],
-            $uploadedFileName
-
-        ]
-    );
-
-    echo $success;
 }
 
 ?>
@@ -101,24 +101,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="form-group mb-3">
                                             <label>Name</label>
                                             <input type="text" class="form-control" name="name" value="">
+                                            <span class="text-danger"><?= $errorMessages['name'] ?? ''; ?></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label>Price</label>
                                             <input type="number" class="form-control" name="price" value="">
+                                            <span class="text-danger"><?= $errorMessages['price'] ?? ''; ?></span>
+
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label>Offer Price</label>
                                             <input type="number" class="form-control" name="offer_price" value="">
+                                            <span class="text-danger"><?= $errorMessages['offer_price'] ?? ''; ?></span>
+
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label>Quantity</label>
                                             <input type="number" class="form-control" name="qty" value="">
+                                            <span class="text-danger"><?= $errorMessages['qty'] ?? ''; ?></span>
+
                                         </div>
                                     </div>
                                 </div>
@@ -137,6 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         }
                                         ?>
                                     </select>
+                                    <span class="text-danger"><?= $errorMessages['category_id'] ?? ''; ?></span>
+
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -153,6 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         }
                                         ?>
                                     </select>
+                                    <span class="text-danger"><?= $errorMessages['brand_id'] ?? ''; ?></span>
+
                                 </div>
 
 
@@ -160,10 +171,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="form-group mb-3">
                                     <label>Short Description</label>
                                     <textarea name="short_description" class="form-control editor" cols="30" rows="10"></textarea>
+                                    <span class="text-danger"><?= $errorMessages['short_description'] ?? ''; ?></span>
+
                                 </div>
                                 <div class="form-group mb-3">
                                     <label>Long Description</label>
                                     <textarea name="long_description" class="form-control h_100" cols="30" rows="10"></textarea>
+                                    <span class="text-danger"><?= $errorMessages['long_description'] ?? ''; ?></span>
+
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -172,13 +187,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <option value="1">Enabled</option>
                                         <option value="0">Disabled</option>
                                     </select>
+                                    <span class="text-danger"><?= $errorMessages['status'] ?? ''; ?></span>
+
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label>Image</label>
                                     <div>
                                         <input type="file" name="image">
+
                                     </div>
+                                    <span class="text-danger"><?= $errorMessages['image'] ?? ''; ?></span>
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Create</button>

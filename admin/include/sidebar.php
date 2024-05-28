@@ -50,13 +50,7 @@
                 </ul>
             </li>
 
-            <li class=""><a class="nav-link" href="setting.php"><i class="fas fa-hand-point-right"></i> <span>Setting</span></a></li>
 
-            <li class=""><a class="nav-link" href="form.php"><i class="fas fa-hand-point-right"></i> <span>Form</span></a></li>
-
-            <li class=""><a class="nav-link" href="table.php"><i class="fas fa-hand-point-right"></i> <span>Table</span></a></li>
-
-            <li class=""><a class="nav-link" href="invoice.php"><i class="fas fa-hand-point-right"></i> <span>Invoice</span></a></li>
 
         </ul>
     </aside>
