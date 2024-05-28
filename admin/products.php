@@ -93,7 +93,7 @@
 <script src="dist/js/custom.js"></script>
 <script>
     $(document).ready(function() {
-        $('.delete').click(function(e) {
+        $(document).on('click', '.delete', function(e) {
             console.log('delete click')
             e.preventDefault();
             $('#myModal').modal('show');
